@@ -31,6 +31,42 @@ public class Main {
                 break;
             }
         }
+        // Массив для отслеживания посещённых вершин
+        boolean[] visited = new boolean[N];
+        // Начальная вершина для обхода
+        int startVe = 0;
+        // Первая вершина считается посещённой
+        visited[startVe] = true;
+        // Обход вершин от вершины i
+        for (int i = 0; i < N; i++) {
+            if (matrix[startVe][i] == 1 && !visited[i]) {
+                // Если есть связь между вершиной и не посещена, отмечаем true
+                visited[i] = true;
+                // Обход вершины от текущей
+                for (int j = 0; j < N; j++) {
+                    // Если есть связь между вершинам и не посещена, то отмечаем true
+                    if (matrix[i][j] == 1 && !visited[j]) {
+                        visited[j] = true;
+                        for (int k = 0; k < N; k++) {
+                            // Проверка на связь вершин j и k и не была ли она посещена ранее
+                            // если да -> true
+                            if (matrix[j][k] == 1 && !visited[k]) {
+                                visited[k] = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        // Переменная типа boolean обозначающая связанность графа
+        boolean isConnected = true;
+        for (int i = 0; i < N; i++) {
+            // Если хотя бы одна не посещённая вершина -> граф не связанный
+            if (!visited[i]) {
+                isConnected = false;
+                break;
+            }
+        }
         // Проверка на не ориентированность графа
         if (grUndirected) {
             // Вводится переменная, которая обозначает количество четных вершин в графе
@@ -49,11 +85,11 @@ public class Main {
             }
             // Переменная типа boolean, которая проверяет что количество нечётных вершин
             // равно 2 или их вообще нет
-            boolean eulUnDir = (oddDegCo == 2 || oddDegCo == 0);
-            System.out.println("(1) Неориентированный");
+            // Проверка что в графе есть хотя бы одно ребро
+            boolean eulUnDir = (((oddDegCo) == 2 || oddDegCo == 0) && isConnected);
             // Вывод переменной типа boolean true/false
-            System.out.println("(2) Эйлеровость : " + eulUnDir);
-            System.out.println("(3) Степени вершин: ");
+            System.out.println("(1) Эйлеровость : " + eulUnDir);
+            System.out.println("(2) Степени вершин: ");
             // Вложенный цикл работающий как на строке 39, только выводит степень вершины на экран
             for (int i = 0; i < N; i++) {
                 int deg = 0;
@@ -62,7 +98,7 @@ public class Main {
                 }
                 System.out.println("    Вершина " + (i + 1) + ": " + deg + " - Степень");
             }
-            System.out.println("(4) Список рёбер графа:");
+            System.out.println("(3) Список рёбер графа:");
             // Вложенный цикл, второй начинается от значения первого +1, чтобы не было повторений
             // рёбер графа, если значение элемента матрицы равно 1, то выводится ребро i - j
             for (int i = 0; i < N; i++) {
@@ -94,14 +130,13 @@ public class Main {
                     break;
                 }
             }
-            System.out.println("(1) Ориентированный");
-            System.out.println("(2) Эйлеровость : " + eulDir);
-            System.out.println("(3) Cтепени вершин");
+            System.out.println("(1) Эйлеровость : " + (eulDir && isConnected));
+            System.out.println("(2) Cтепени вершин");
             // Так как уже есть список с входящими/исходящими рёбрами то просто выводятся степени вершины
             for (int k = 0; k < N; k++) {
                 System.out.println("    Вершина: " + (k + 1) + ". Исходящая степень - " + outDeg[k] + ". Входящая степень - " + inDeg[k]);
             }
-            System.out.println("(4) Список рёбер графа:");
+            System.out.println("(3) Список рёбер графа:");
             // Циклы, проходящие по строкам матрицы и если элемент равен 1, то строится ребро i->j
             for (int i = 0; i < N; i++) {
                 for (int j = 0; j < N; j++) {
@@ -131,7 +166,7 @@ public class Main {
                 }
             }
         }
-        System.out.println("(5) Матрица достижимости:");
+        System.out.println("(4) Матрица достижимости:");
         // Вывод двумерного массива отображающего матрицу достижимости построчно
         for (int i = 0; i < N; i++) {
             System.out.print("    ");
